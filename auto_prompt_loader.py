@@ -7,7 +7,7 @@ class AutoPromptBatchLoaderNoCache:
         return {
             "required": {
                 "folder_path": ("STRING", {"default": ""}),
-                "batch_size": ("INT", {"default": 1, "min": 0, "max": 9999}),
+                "batch_size": ("INT", {"default": 0, "min": 0, "max": 9999}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
             }
         }
