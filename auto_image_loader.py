@@ -14,21 +14,22 @@ class AutoImageBatchLoader:
         return {
             "required": {
                 "folder_path": ("STRING", {"default": ""}),
-                "batch_size": ("INT", {"default": 0, "min": 0, "max": 1000}),  # 0 = all,
-		"seed": ("INT", {"default": 0})
+                "batch_size": ("INT", {"default": 0, "min": 0, "max": 1000}),  # 0 = all
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff})
             }
         }
 
     RETURN_TYPES = ("IMAGE",)
     OUTPUT_IS_LIST = (True,)
     FUNCTION = "load_images"
-    CATEGORY = "Custom"
+    CATEGORY = "utils"
 
     def load_images(self, folder_path, seed, batch_size):
         _ = seed  # trigger recompute
 
         if not os.path.isdir(folder_path):
-            raise ValueError(f"Invalid folder: {folder_path}")
+            print(f"[Auto Image Loader] Invalid folder: {folder_path}")
+            return ([],)
 
         # Filter only image files
         files = [

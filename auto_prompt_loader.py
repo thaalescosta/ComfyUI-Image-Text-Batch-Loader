@@ -44,7 +44,8 @@ class AutoPromptBatchLoaderNoCache:
                     content = f.read().strip()
                     if content:
                         prompts.append(content)
-            except:
+            except Exception as e:
+                print(f"[Auto Prompt Loader] Failed to read {file}: {e}")
                 continue
 
         if not prompts:

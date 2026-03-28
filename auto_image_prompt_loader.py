@@ -21,9 +21,15 @@ class AutoImageCaptionBatchLoaderNoCache:
     FUNCTION = "load_pairs"
     CATEGORY = "utils"
 
+    @classmethod
+    def _empty_return(cls):
+        blank = torch.zeros(1, 1, 1, 3)
+        return ([blank], [""])
+
     def load_pairs(self, folder_path, batch_size, seed):
         if not os.path.exists(folder_path):
-            return ([], [""])
+            print(f"[Auto Image+Caption Loader] Invalid folder: {folder_path}")
+            return self._empty_return()
 
         # Supported image formats
         image_exts = (".png", ".jpg", ".jpeg", ".webp")
@@ -35,7 +41,8 @@ class AutoImageCaptionBatchLoaderNoCache:
         ]
 
         if not image_files:
-            return ([], [""])
+            print(f"[Auto Image+Caption Loader] No images found in: {folder_path}")
+            return self._empty_return()
 
         # Pair images with captions
         pairs = []
@@ -50,7 +57,8 @@ class AutoImageCaptionBatchLoaderNoCache:
             pairs.append((img_path, txt_path))
 
         if not pairs:
-            return ([], [""])
+            print(f"[Auto Image+Caption Loader] No image+caption pairs found in: {folder_path}")
+            return self._empty_return()
 
         # Shuffle deterministically
         random.seed(seed)
@@ -76,11 +84,13 @@ class AutoImageCaptionBatchLoaderNoCache:
                     caption = f.read().strip()
                     captions.append(caption)
 
-            except:
+            except Exception as e:
+                print(f"[Auto Image+Caption Loader] Failed to load {img_path}: {e}")
                 continue
 
         if not images:
-            return ([], [""])
+            print(f"[Auto Image+Caption Loader] All pairs failed to load in: {folder_path}")
+            return self._empty_return()
 
         return (images, captions)
 
