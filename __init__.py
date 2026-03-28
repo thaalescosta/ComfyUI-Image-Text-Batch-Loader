@@ -1,0 +1,3 @@
+from .auto_image_loader import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+from .auto_prompt_loader import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
+from .auto_image_prompt_loader import NODE_CLASS_MAPPINGS, NODE_DISPLAY_NAME_MAPPINGS
