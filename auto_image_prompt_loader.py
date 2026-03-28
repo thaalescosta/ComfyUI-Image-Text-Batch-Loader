@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import torch
 
-class AutoImageCaptionBatchLoaderNoCache:
+class AutoImageTextBatchLoaderNoCache:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -16,7 +16,7 @@ class AutoImageCaptionBatchLoaderNoCache:
         }
 
     RETURN_TYPES = ("IMAGE", "STRING")
-    RETURN_NAMES = ("images", "captions")
+    RETURN_NAMES = ("images", "texts")
     OUTPUT_IS_LIST = (True, True)
     FUNCTION = "load_pairs"
     CATEGORY = "utils"
@@ -28,7 +28,7 @@ class AutoImageCaptionBatchLoaderNoCache:
 
     def load_pairs(self, folder_path, batch_size, seed):
         if not os.path.exists(folder_path):
-            print(f"[Auto Image+Caption Loader] Invalid folder: {folder_path}")
+            print(f"[Auto Image+Text Loader] Invalid folder: {folder_path}")
             return self._empty_return()
 
         # Supported image formats
@@ -41,10 +41,10 @@ class AutoImageCaptionBatchLoaderNoCache:
         ]
 
         if not image_files:
-            print(f"[Auto Image+Caption Loader] No images found in: {folder_path}")
+            print(f"[Auto Image+Text Loader] No images found in: {folder_path}")
             return self._empty_return()
 
-        # Pair images with captions
+        # Pair images with texts
         pairs = []
         for img_file in image_files:
             base = os.path.splitext(img_file)[0]
@@ -57,7 +57,7 @@ class AutoImageCaptionBatchLoaderNoCache:
             pairs.append((img_path, txt_path))
 
         if not pairs:
-            print(f"[Auto Image+Caption Loader] No image+caption pairs found in: {folder_path}")
+            print(f"[Auto Image+Text Loader] No image+text pairs found in: {folder_path}")
             return self._empty_return()
 
         # Shuffle deterministically
@@ -69,7 +69,7 @@ class AutoImageCaptionBatchLoaderNoCache:
             pairs = pairs[:batch_size]
 
         images = []
-        captions = []
+        texts = []
 
         for img_path, txt_path in pairs:
             try:
@@ -79,24 +79,28 @@ class AutoImageCaptionBatchLoaderNoCache:
                 img = torch.from_numpy(img)[None,]
                 images.append(img)
 
-                # Load caption
+                # Load text
                 with open(txt_path, "r", encoding="utf-8") as f:
-                    caption = f.read().strip()
-                    captions.append(caption)
+                    text = f.read().strip()
+                    texts.append(text)
 
             except Exception as e:
-                print(f"[Auto Image+Caption Loader] Failed to load {img_path}: {e}")
+                print(f"[Auto Image+Text Loader] Failed to load {img_path}: {e}")
                 continue
 
         if not images:
-            print(f"[Auto Image+Caption Loader] All pairs failed to load in: {folder_path}")
+            print(f"[Auto Image+Text Loader] All pairs failed to load in: {folder_path}")
             return self._empty_return()
 
-        return (images, captions)
+        return (images, texts)
 
 
 NODE_CLASS_MAPPINGS = {
-    "AutoImageCaptionBatchLoaderNoCache": AutoImageCaptionBatchLoaderNoCache
+    "AutoImageTextBatchLoaderNoCache": AutoImageTextBatchLoaderNoCache
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "AutoImageTextBatchLoaderNoCache": "Auto Image+Text Batch Loader (No Cache)"
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {

@@ -18,12 +18,12 @@ Loads images from a folder and returns them as a list.
 
 ---
 
-### Auto Image+Prompt Batch Loader (No Cache)
-Loads image + `.txt` prompt pairs from a folder. Only pairs where both files exist are loaded.
+### Auto Image+Text Batch Loader (No Cache)
+Loads image + `.txt` text pairs from a folder. Only pairs where both files exist are loaded.
 
 | Input | Type | Description |
 |---|---|---|
-| `folder_path` | STRING | Path to the folder containing image/caption pairs |
+| `folder_path` | STRING | Path to the folder containing image/prompt pairs |
 | `batch_size` | INT | Number of pairs to load. `0` = load all |
 | `seed` | INT | Controls shuffle order deterministically |
 
