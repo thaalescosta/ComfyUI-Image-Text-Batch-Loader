@@ -32,13 +32,13 @@ Loads image + `.txt` text pairs from a folder. Only pairs where both files exist
 
 ---
 
-### Auto Prompt Batch Loader (No Cache)
+### Auto Text Batch Loader (No Cache)
 Loads `.txt` files from a folder and returns their contents as a list of strings.
 
 | Input | Type | Description |
 |---|---|---|
 | `folder_path` | STRING | Path to the folder containing `.txt` files |
-| `batch_size` | INT | Number of prompts to load. `0` = load all |
+| `batch_size` | INT | Number of texts to load. `0` = load all |
 | `seed` | INT | Controls shuffle order deterministically |
 
 - Files are shuffled deterministically using the seed

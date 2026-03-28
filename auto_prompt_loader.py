@@ -1,7 +1,7 @@
 import os
 import random
 
-class AutoPromptBatchLoaderNoCache:
+class AutoTextBatchLoaderNoCache:
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -13,12 +13,12 @@ class AutoPromptBatchLoaderNoCache:
         }
 
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("prompts",)
+    RETURN_NAMES = ("texts",)
     OUTPUT_IS_LIST = (True,)
-    FUNCTION = "load_prompts"
+    FUNCTION = "load_texts"
     CATEGORY = "utils"
 
-    def load_prompts(self, folder_path, batch_size, seed):
+    def load_texts(self, folder_path, batch_size, seed):
         if not os.path.exists(folder_path):
             return ([""],)
 
@@ -36,34 +36,34 @@ class AutoPromptBatchLoaderNoCache:
         random.seed(seed)
         random.shuffle(files)
 
-        # Load all prompts
-        prompts = []
+        # Load all texts
+        texts = []
         for file in files:
             try:
                 with open(file, "r", encoding="utf-8") as f:
                     content = f.read().strip()
                     if content:
-                        prompts.append(content)
+                        texts.append(content)
             except Exception as e:
-                print(f"[Auto Prompt Loader] Failed to read {file}: {e}")
+                print(f"[Auto Text Loader] Failed to read {file}: {e}")
                 continue
 
-        if not prompts:
+        if not texts:
             return ([""],)
 
         # Apply batch_size logic
         if batch_size == 0:
-            selected = prompts
+            selected = texts
         else:
-            selected = prompts[:batch_size]
+            selected = texts[:batch_size]
 
         return (selected,)
 
 
 NODE_CLASS_MAPPINGS = {
-    "AutoPromptBatchLoaderNoCache": AutoPromptBatchLoaderNoCache
+    "AutoTextBatchLoaderNoCache": AutoTextBatchLoaderNoCache
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "AutoPromptBatchLoaderNoCache": "Auto Prompt Batch Loader (No Cache)"
+    "AutoTextBatchLoaderNoCache": "Auto Text Batch Loader (No Cache)"
 }
