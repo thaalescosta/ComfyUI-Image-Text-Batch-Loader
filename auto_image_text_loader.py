@@ -102,7 +102,3 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "AutoImageTextBatchLoaderNoCache": "Auto Image+Text Batch Loader (No Cache)"
 }
-
-NODE_DISPLAY_NAME_MAPPINGS = {
-    "AutoImageCaptionBatchLoaderNoCache": "Auto Image+Caption Loader (No Cache)"
-}
