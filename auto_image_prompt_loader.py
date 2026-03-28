@@ -2,6 +2,7 @@ import os
 import random
 from PIL import Image
 import numpy as np
+import torch
 
 class AutoImageCaptionBatchLoaderNoCache:
     @classmethod
@@ -16,6 +17,7 @@ class AutoImageCaptionBatchLoaderNoCache:
 
     RETURN_TYPES = ("IMAGE", "STRING")
     RETURN_NAMES = ("images", "captions")
+    OUTPUT_IS_LIST = (True, True)
     FUNCTION = "load_pairs"
     CATEGORY = "utils"
 
@@ -66,6 +68,7 @@ class AutoImageCaptionBatchLoaderNoCache:
                 # Load image
                 img = Image.open(img_path).convert("RGB")
                 img = np.array(img).astype(np.float32) / 255.0
+                img = torch.from_numpy(img)[None,]
                 images.append(img)
 
                 # Load caption

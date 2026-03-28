@@ -14,6 +14,7 @@ class AutoPromptBatchLoaderNoCache:
 
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("prompts",)
+    OUTPUT_IS_LIST = (True,)
     FUNCTION = "load_prompts"
     CATEGORY = "utils"
 
