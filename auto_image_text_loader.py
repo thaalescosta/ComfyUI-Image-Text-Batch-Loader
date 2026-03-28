@@ -1,8 +1,13 @@
 import os
+import re
 import random
 from PIL import Image
 import numpy as np
 import torch
+
+def natural_sort_key(s):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split(r'(\d+)', s)]
 
 class AutoImageTextBatchLoaderNoCache:
     @classmethod
@@ -12,6 +17,7 @@ class AutoImageTextBatchLoaderNoCache:
                 "folder_path": ("STRING", {"default": ""}),
                 "batch_size": ("INT", {"default": 0, "min": 0, "max": 9999}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "sort_order": (["alphabetical", "reverse alphabetical", "random"],),
             }
         }
 
@@ -26,7 +32,9 @@ class AutoImageTextBatchLoaderNoCache:
         blank = torch.zeros(1, 1, 1, 3)
         return ([blank], [""])
 
-    def load_pairs(self, folder_path, batch_size, seed):
+    def load_pairs(self, folder_path, batch_size, seed, sort_order):
+        _ = seed  # trigger recompute only
+
         if not os.path.exists(folder_path):
             print(f"[Auto Image+Text Loader] Invalid folder: {folder_path}")
             return self._empty_return()
@@ -60,9 +68,13 @@ class AutoImageTextBatchLoaderNoCache:
             print(f"[Auto Image+Text Loader] No image+text pairs found in: {folder_path}")
             return self._empty_return()
 
-        # Shuffle deterministically
-        random.seed(seed)
-        random.shuffle(pairs)
+        # Sort or shuffle
+        if sort_order == "random":
+            random.shuffle(pairs)
+        elif sort_order == "reverse alphabetical":
+            pairs = sorted(pairs, key=lambda p: natural_sort_key(os.path.basename(p[0])), reverse=True)
+        else:
+            pairs = sorted(pairs, key=lambda p: natural_sort_key(os.path.basename(p[0])))
 
         # Apply batch size
         if batch_size != 0:

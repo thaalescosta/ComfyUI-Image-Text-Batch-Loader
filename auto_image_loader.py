@@ -1,5 +1,6 @@
 import os
 import re
+import random
 from PIL import Image
 import numpy as np
 import torch
@@ -15,7 +16,8 @@ class AutoImageBatchLoader:
             "required": {
                 "folder_path": ("STRING", {"default": ""}),
                 "batch_size": ("INT", {"default": 0, "min": 0, "max": 1000}),  # 0 = all
-                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff})
+                "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "sort_order": (["alphabetical", "reverse alphabetical", "random"],),
             }
         }
 
@@ -24,8 +26,8 @@ class AutoImageBatchLoader:
     FUNCTION = "load_images"
     CATEGORY = "utils"
 
-    def load_images(self, folder_path, seed, batch_size):
-        _ = seed  # trigger recompute
+    def load_images(self, folder_path, seed, batch_size, sort_order):
+        _ = seed  # trigger recompute only
 
         if not os.path.isdir(folder_path):
             print(f"[Auto Image Loader] Invalid folder: {folder_path}")
@@ -37,8 +39,13 @@ class AutoImageBatchLoader:
             if f.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))
         ]
 
-        # Natural sort
-        files = sorted(files, key=natural_sort_key)
+        # Sort or shuffle
+        if sort_order == "random":
+            random.shuffle(files)
+        elif sort_order == "reverse alphabetical":
+            files = sorted(files, key=natural_sort_key, reverse=True)
+        else:
+            files = sorted(files, key=natural_sort_key)
 
         total_files = len(files)
 

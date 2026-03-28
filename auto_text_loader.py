@@ -1,5 +1,10 @@
 import os
+import re
 import random
+
+def natural_sort_key(s):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split(r'(\d+)', s)]
 
 class AutoTextBatchLoaderNoCache:
     @classmethod
@@ -9,6 +14,7 @@ class AutoTextBatchLoaderNoCache:
                 "folder_path": ("STRING", {"default": ""}),
                 "batch_size": ("INT", {"default": 0, "min": 0, "max": 9999}),
                 "seed": ("INT", {"default": 0, "min": 0, "max": 0xffffffffffffffff}),
+                "sort_order": (["alphabetical", "reverse alphabetical", "random"],),
             }
         }
 
@@ -18,29 +24,34 @@ class AutoTextBatchLoaderNoCache:
     FUNCTION = "load_texts"
     CATEGORY = "utils"
 
-    def load_texts(self, folder_path, batch_size, seed):
+    def load_texts(self, folder_path, batch_size, seed, sort_order):
+        _ = seed  # trigger recompute only
+
         if not os.path.exists(folder_path):
             return ([""],)
 
         # Always re-read files (NO CACHE)
         files = [
-            os.path.join(folder_path, f)
-            for f in os.listdir(folder_path)
+            f for f in os.listdir(folder_path)
             if f.lower().endswith(".txt")
         ]
 
         if not files:
             return ([""],)
 
-        # Deterministic shuffle using seed
-        random.seed(seed)
-        random.shuffle(files)
+        # Sort or shuffle
+        if sort_order == "random":
+            random.shuffle(files)
+        elif sort_order == "reverse alphabetical":
+            files = sorted(files, key=natural_sort_key, reverse=True)
+        else:
+            files = sorted(files, key=natural_sort_key)
 
         # Load all texts
         texts = []
         for file in files:
             try:
-                with open(file, "r", encoding="utf-8") as f:
+                with open(os.path.join(folder_path, file), "r", encoding="utf-8") as f:
                     content = f.read().strip()
                     if content:
                         texts.append(content)
