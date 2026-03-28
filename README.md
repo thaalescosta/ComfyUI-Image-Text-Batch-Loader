@@ -18,8 +18,8 @@ Loads images from a folder and returns them as a list.
 
 ---
 
-### Auto Image+Caption Batch Loader (No Cache)
-Loads image + `.txt` caption pairs from a folder. Only pairs where both files exist are loaded.
+### Auto Image+Prompt Batch Loader (No Cache)
+Loads image + `.txt` prompt pairs from a folder. Only pairs where both files exist are loaded.
 
 | Input | Type | Description |
 |---|---|---|
